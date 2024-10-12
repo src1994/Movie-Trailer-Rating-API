@@ -15,7 +15,7 @@ router.post('/register', [
   check('role').isIn(["USER", "ADMIN"]).withMessage("Invalid role")
 ], userController.register);
 
-router.post('/users', [
+router.post('/users/login', [
     check('email').isEmail().withMessage("invalid email format"),
     check('password').notEmpty().withMessage('Password is required'),
 ], userController.login);

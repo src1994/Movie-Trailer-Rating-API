@@ -55,10 +55,13 @@ class UserService {
                     role: foundUser.role
                 }, process.env.SECRET_KEY);
             }
+            else {
+                throw new Error('SECRET_KEY is not defined');
+            }
             return { user: foundUser, accessToken: token };
         }
         catch (error) {
-            throw new Error('Failed to create user');
+            throw new Error('Failed to login user');
         }
     }
     async update(userId, user) {
