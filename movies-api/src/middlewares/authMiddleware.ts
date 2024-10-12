@@ -1,10 +1,7 @@
-import { check } from 'express-validator';
-
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { Request, Response, NextFunction } from 'express';
-import { trusted } from 'mongoose';
-import { relative } from 'path';
+
 
 dotenv.config(); 
 
@@ -22,10 +19,11 @@ export function checkRole(roles: string[]) {
                 return res.status(403).json({ message: "Acess Forbidden. User dosen't have required rule"} 
                 
                 )}
+            next();
             }catch (error) {
                 return res.status(403).json({error: "Access Forbidden. Invalid or  expired token"})
             }
-            next();
+          
         }
     
 }

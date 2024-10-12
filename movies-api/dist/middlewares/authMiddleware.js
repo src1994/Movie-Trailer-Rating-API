@@ -14,10 +14,10 @@ export function checkRole(roles) {
             if (!roles.includes(decodedToken.role)) {
                 return res.status(403).json({ message: "Acess Forbidden. User dosen't have required rule" });
             }
+            next();
         }
         catch (error) {
             return res.status(403).json({ error: "Access Forbidden. Invalid or  expired token" });
         }
-        next();
     };
 }
