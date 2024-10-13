@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
 import userController from '../controllers/userController.js';
+import {checkRole} from  '../middlewares/authMiddleware.js'; 
 
 const router: Router = Router();
 
-router.get('/users', userController.getAll);
+router.get('/users', checkRole(["ADMIN"]), userController.getAll);
 
-router.get('/users/:id', userController.getOne);
+router.get('/users/:id', checkRole(["ADMIN"]), userController.getOne);
 
 router.post('/register', [
   check('name').notEmpty().withMessage("Name is required"),
@@ -20,8 +21,8 @@ router.post('/login', [
     check('password').notEmpty().withMessage('Password is required'),
 ], userController.login);
 
-router.put('/users/:id', userController.update);
+router.put('/users/:id', checkRole(["ADMIN"]), userController.update);
 
-router.delete('/users/:id',userController.delete);
+router.delete('/users/:id',  checkRole(["ADMIN"]), userController.delete);
 
 export default router;
