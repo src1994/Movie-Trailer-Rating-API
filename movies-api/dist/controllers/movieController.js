@@ -6,20 +6,39 @@ class MovieController {
             res.json(movies);
         }
         catch (error) {
-            res.status(500).json({ error: 'Failed to get movies' });
+            res.status(500).json({ error: 'Failed to fetch movies' });
         }
     }
-    async getOne(req, res, next) {
+    async search(req, res, next) {
         try {
-            const movieId = req.params.id;
-            const movie = await movieService.getOne(movieId);
-            if (!movie) {
-                return res.status(400).json({ error: 'Movie not found' });
+            const page = req.query.page ? req.query.page : '1';
+            const limit = req.query.limit ? req.query.limit : '10';
+            const sortBy = req.query.sortBy ? req.query.sortBy : 'releaseDate';
+            const year = req.query.year ? req.query.year : undefined;
+            const name = req.query.name ? req.query.name : undefined;
+            const genre = req.query.genre ? req.query.genre : undefined;
+            const pageNumber = parseInt(page, 10);
+            const limitNumber = parseInt(limit, 10);
+            if (isNaN(pageNumber) || pageNumber <= 0) {
+                return res.status(400).json({ error: 'Invalid page number' });
             }
-            res.json(movie);
+            if (isNaN(limitNumber) || limitNumber <= 0) {
+                return res.status(400).json({ error: 'Invalid limit value' });
+            }
+            const validSortFields = ['releaseDate', 'title', 'genre'];
+            const sortField = validSortFields.includes(sortBy) ? sortBy : 'releaseDate';
+            const filters = {};
+            if (year)
+                filters.releaseDate = { $regex: year, $options: 'i' };
+            if (name)
+                filters.title = { $regex: name, $options: 'i' };
+            if (genre)
+                filters.genres = { $regex: genre, $options: 'i' };
+            const movies = await movieService.search(filters, pageNumber, limitNumber, sortField);
+            res.json(movies);
         }
         catch (error) {
-            res.status(500).json({ erro: 'Failed to get movie' });
+            res.status(500).json({ error: 'Failed to search movies' });
         }
     }
     async create(req, res, next) {

@@ -2,12 +2,21 @@ import MovieModel from "../models/movieModels.js";
 import fileService from '../utils/fileService.js';
 class MovieService {
     async getAll() {
-        try {
-            return await MovieModel.find();
-        }
-        catch (error) {
-            throw new Error('Failed to get all movies');
-        }
+        return await MovieModel.find({}, 'title trailerLink');
+    }
+    async search(filters, page, limit, sortBy) {
+        const skip = (page - 1) * limit;
+        const movies = await MovieModel.find(filters)
+            .sort({ [sortBy]: 1 })
+            .skip(skip)
+            .limit(limit);
+        const total = await MovieModel.countDocuments(filters);
+        return {
+            movies,
+            total,
+            page,
+            pages: Math.ceil(total / limit)
+        };
     }
     async getOne(movieId) {
         try {

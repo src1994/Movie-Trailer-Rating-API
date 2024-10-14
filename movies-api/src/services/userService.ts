@@ -48,32 +48,42 @@ class UserService {
         } 
     } 
 
-    async login  (email: string, password: string): Promise < {user: IUser, accessToken: string} | null > { 
-
+    async login(email: string, password: string): Promise<{ user: IUser, accessToken: string } | null> {
         try {
-            const  foundUser = await userModels.findOne({email: email});
-
-            if(!foundUser) {
-                return null;
+            // Find the user by email
+            const foundUser = await userModels.findOne({ email: email });
+    
+            if (!foundUser) {
+                return null; // User not found
             }
-            if (!await bcrypt.compare(password, foundUser.password)) {
-                return null;
+    
+            // Compare the provided password with the hashed password stored in the database
+            const isPasswordMatch = await bcrypt.compare(password, foundUser.password);
+            if (!isPasswordMatch) {
+                return null; // Incorrect password
             }
-
-            let token ="";
-
+    
+            // Generate a JWT token if password matches
+            let token = '';
             if (process.env.SECRET_KEY) {
-                token = jwt.sign ({
-                    id: foundUser._id, 
-                    email: foundUser.email,
-                    role: foundUser.role
-                }, process.env.SECRET_KEY)
+                token = jwt.sign(
+                    {
+                        id: foundUser._id,
+                        email: foundUser.email,
+                        role: foundUser.role,
+                    },
+                    process.env.SECRET_KEY,  // Secret key from environment variables
+                    { expiresIn: '1h' }  // Token expiration set to 1 hour
+                );
             } else {
-                throw  new Error('SECRET_KEY is not defined');
+                throw new Error('SECRET_KEY is not defined');
             }
-        return {user: foundUser, accessToken:token}
+    
+            // Return the user object and the generated JWT token
+            return { user: foundUser, accessToken: token };
         } catch (error) {
-            throw new Error('Failed to login user')
+            console.error(error);
+            throw new Error('Failed to login user');
         }
     }
 

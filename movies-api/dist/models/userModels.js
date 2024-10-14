@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 const UserSchema = new mongoose.Schema({
-    name: { type: String, require: true },
-    email: { type: String, require: true },
-    password: { type: String, require: true },
-    role: { type: String, require: "USER" },
-    isActive: { type: Boolean, require: true },
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, required: true, default: "USER" },
+    isActive: { type: Boolean, required: true, default: true },
 }, { timestamps: true });
-export default mongoose.model("USER", UserSchema);
+export default mongoose.model("User", UserSchema);

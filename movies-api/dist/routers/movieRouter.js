@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import MovieController from '../controllers/movieController.js';
-import { checkRole } from '../middlewares/authMiddleware.js';
+import { checkRole, checkAuth } from '../middlewares/authMiddleware.js';
 const router = Router();
-router.get('/movies', MovieController.getAll);
-router.get('/movies/:id', MovieController.getOne);
+router.get('/movies', checkAuth, MovieController.getAll);
+router.get('/movies/search', checkAuth, MovieController.search);
 router.post('/movies/', checkRole(["ADMIN"]), MovieController.create);
 router.put('/movies/:id', checkRole(["ADMIN"]), MovieController.update);
 router.delete('/movies/:id', checkRole(["ADMIN"]), MovieController.delete);

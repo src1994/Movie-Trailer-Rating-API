@@ -59,11 +59,11 @@ class UserController {
 
             const foundUserWithToken: any  = await userService.login(email, password);
             if (foundUserWithToken === null) {
-                return res.status(404).json({error: 'failed to create'});
+                return res.status(404).json({error: 'failed to login. Invalid Credentials'});
             }
             res.json(foundUserWithToken);
         }catch (error) {
-            res.status(500).json({error: 'Failed to create user'})
+            res.status(500).json({error: 'Failed to login user'})
         }
     }
 
