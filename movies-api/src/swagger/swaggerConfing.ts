@@ -48,7 +48,7 @@ const swaggerOptions = {
               },
               posterUrl: {
                 type: 'string',
-                example: '/static/inception-poster.jpg'
+                example: 'poster-name.jpg'
               },
               genres: {
                 type: 'array',

@@ -1,13 +1,12 @@
 import { IMovie } from "../models/movieModels.js";
 import MovieModel from "../models/movieModels.js";
 import fileService from "../utils/fileService.js";
-import path from 'path';
-import  fs from 'fs';
+
 
 class MovieService {
 
     async getAll(): Promise<IMovie[]> {
-        return await MovieModel.find({}, 'title releaseDate genres trailerLink');
+        return await MovieModel.find({}, 'title releaseDate genres posterUrl trailerLink');
     }
 
     async search(filters: any, page: number, limit: number, sortBy: string): Promise<any> {
