@@ -12,7 +12,7 @@ router.post('/register', [
     check('role').isIn(["USER", "ADMIN"]).withMessage("Invalid role")
 ], userController.register);
 router.post('/login', [
-    check('email').isEmail().withMessage("invalid email format"),
+    check('email').isEmail().withMessage("Invalid email format"),
     check('password').notEmpty().withMessage('Password is required'),
 ], userController.login);
 router.put('/users/:id', checkRole(["ADMIN"]), userController.update);
