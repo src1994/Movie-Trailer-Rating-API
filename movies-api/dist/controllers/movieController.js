@@ -11,33 +11,40 @@ class MovieController {
     }
     async search(req, res, next) {
         try {
-            const page = req.query.page ? req.query.page : '1';
-            const limit = req.query.limit ? req.query.limit : '10';
+            const page = req.query.page ? parseInt(req.query.page) : 1;
+            const limit = req.query.limit ? parseInt(req.query.limit) : 10;
             const sortBy = req.query.sortBy ? req.query.sortBy : 'releaseDate';
             const year = req.query.year ? req.query.year : undefined;
             const name = req.query.name ? req.query.name : undefined;
             const genre = req.query.genre ? req.query.genre : undefined;
-            const pageNumber = parseInt(page, 10);
-            const limitNumber = parseInt(limit, 10);
-            if (isNaN(pageNumber) || pageNumber <= 0) {
+            const releaseDate = req.query.releaseDate ? req.query.releaseDate : undefined;
+            if (isNaN(page) || page <= 0) {
                 return res.status(400).json({ error: 'Invalid page number' });
             }
-            if (isNaN(limitNumber) || limitNumber <= 0) {
+            if (isNaN(limit) || limit <= 0) {
                 return res.status(400).json({ error: 'Invalid limit value' });
             }
-            const validSortFields = ['releaseDate', 'title', 'genre'];
+            const validSortFields = ['releaseDate', 'title', 'genres'];
             const sortField = validSortFields.includes(sortBy) ? sortBy : 'releaseDate';
             const filters = {};
-            if (year)
-                filters.releaseDate = { $regex: year, $options: 'i' };
+            if (year) {
+                const yearStart = new Date(`${year}-01-01T00:00:00.000Z`);
+                const yearEnd = new Date(`${year}-12-31T23:59:59.999Z`);
+                filters.releaseDate = { $gte: yearStart, $lte: yearEnd };
+            }
+            if (req.query.releaseDate) {
+                const releaseDate = new Date(req.query.releaseDate);
+                filters.releaseDate = releaseDate;
+            }
             if (name)
                 filters.title = { $regex: name, $options: 'i' };
             if (genre)
                 filters.genres = { $regex: genre, $options: 'i' };
-            const movies = await movieService.search(filters, pageNumber, limitNumber, sortField);
+            const movies = await movieService.search(filters, page, limit, sortField);
             res.json(movies);
         }
         catch (error) {
+            console.error('Error during movie search:', error);
             res.status(500).json({ error: 'Failed to search movies' });
         }
     }

@@ -1,12 +1,13 @@
 import { IMovie } from "../models/movieModels.js";
 import MovieModel from "../models/movieModels.js";
+import fileService from "../utils/fileService.js";
 import path from 'path';
 import  fs from 'fs';
 
 class MovieService {
 
     async getAll(): Promise<IMovie[]> {
-        return await MovieModel.find({}, 'title trailerLink');
+        return await MovieModel.find({}, 'title releaseDate genres trailerLink');
     }
 
     async search(filters: any, page: number, limit: number, sortBy: string): Promise<any> {
@@ -40,23 +41,18 @@ class MovieService {
     async create(movieData: IMovie, poster: any) {
         try {
             if (poster) {
-                const fileName = `${movieData.title.replace(/ /g, '-')}-poster.jpg`;
-                const __dirname = path.dirname(new URL(import.meta.url).pathname);
-                const filePath = path.join(__dirname, '..', 'static', fileName);
-    
-                await new Promise<void>((resolve, reject) => {
-                    poster.mv(filePath, (err: any) => {
-                        if (err) {
-                            console.log(err);
-                            return reject(new Error('Failed to upload poster'));
-                        }
-                        resolve();
-                    });
-                });
-    
-                movieData.posterUrl = `/static/${fileName}`;
+                // Check if the uploaded file type is allowed
+                const allowedTypes = ['image/jpeg', 'image/png'];
+                if (!allowedTypes.includes(poster.mimetype)) {
+                    throw new Error('Invalid file type. Only JPEG and PNG are allowed.');
+                }
+
+                // Use FileService to save the poster file
+                const fileName = fileService.save(poster);
+                movieData.posterUrl = `/static/${fileName}`; // Assign poster URL for storage
             }
-    
+
+            // Create the new movie in the database
             const newMovie = new MovieModel(movieData);
             return await newMovie.save();
         } catch (err) {

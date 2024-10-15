@@ -1,8 +1,8 @@
 import MovieModel from "../models/movieModels.js";
-import path from 'path';
+import fileService from "../utils/fileService.js";
 class MovieService {
     async getAll() {
-        return await MovieModel.find({}, 'title trailerLink');
+        return await MovieModel.find({}, 'title releaseDate genres trailerLink');
     }
     async search(filters, page, limit, sortBy) {
         const skip = (page - 1) * limit;
@@ -30,18 +30,11 @@ class MovieService {
     async create(movieData, poster) {
         try {
             if (poster) {
-                const fileName = `${movieData.title.replace(/ /g, '-')}-poster.jpg`;
-                const __dirname = path.dirname(new URL(import.meta.url).pathname);
-                const filePath = path.join(__dirname, '..', 'static', fileName);
-                await new Promise((resolve, reject) => {
-                    poster.mv(filePath, (err) => {
-                        if (err) {
-                            console.log(err);
-                            return reject(new Error('Failed to upload poster'));
-                        }
-                        resolve();
-                    });
-                });
+                const allowedTypes = ['image/jpeg', 'image/png'];
+                if (!allowedTypes.includes(poster.mimetype)) {
+                    throw new Error('Invalid file type. Only JPEG and PNG are allowed.');
+                }
+                const fileName = fileService.save(poster);
                 movieData.posterUrl = `/static/${fileName}`;
             }
             const newMovie = new MovieModel(movieData);
