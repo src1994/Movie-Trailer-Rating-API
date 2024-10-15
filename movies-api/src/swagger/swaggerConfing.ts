@@ -2,6 +2,7 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { Express } from 'express';
 
+
 const swaggerOptions = {
     swaggerDefinition: {
       openapi: '3.0.0',

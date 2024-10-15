@@ -7,7 +7,7 @@ const router: Router = Router();
 
 /**
  * @swagger
- * /movies:
+ * /api/movies:
  *   get:
  *     description: Get all movies.
  *     security:
@@ -28,7 +28,7 @@ router.get('/movies', checkAuth, MovieController.getAll);
 
 /**
  * @swagger
- * /movies/search:
+ * /api/movies/search:
  *   get:
  *     description: Search movies with optional filters (e.g., year, genre, name).
  *     security:
@@ -68,7 +68,7 @@ router.get('/movies/search', checkAuth, MovieController.search);
 
 /**
  * @swagger
- * /movies/{id}/comment:
+ * /api/movies/{id}/comment:
  *   post:
  *     description: Add a comment to a movie.
  *     security:
@@ -102,7 +102,7 @@ router.post('/movies/:id/comment', checkAuth, MovieController.addComment);
 
 /**
  * @swagger
- * /movies/{id}/rate:
+ * /api/movies/{id}/rate:
  *   post:
  *     description: Rate a movie.
  *     security:
@@ -137,7 +137,7 @@ router.post('/movies/:id/rate', checkAuth, MovieController.rateMovie);
 
 /**
  * @swagger
- * /movies:
+ * /api/movies:
  *   post:
  *     description: Create a new movie (Admin only).
  *     security:
@@ -162,7 +162,7 @@ router.post('/movies', checkRole(["ADMIN"]), MovieController.create);
 
 /**
  * @swagger
- * /movies/{id}:
+ * /api/movies/{id}:
  *   put:
  *     description: Update a movie (Admin only).
  *     security:
@@ -194,7 +194,7 @@ router.put('/movies/:id', checkRole(["ADMIN"]), MovieController.update);
 
 /**
  * @swagger
- * /movies/{id}:
+ * /api/movies/{id}:
  *   delete:
  *     description: Delete a movie (Admin only).
  *     security:

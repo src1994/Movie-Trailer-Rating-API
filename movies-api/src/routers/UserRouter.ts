@@ -7,7 +7,7 @@ const router: Router = Router();
 
 /**
  * @swagger
- * /users:
+ * /auth/users:
  *   get:
  *     description: Get all users (Admin only).
  *     security:
@@ -30,7 +30,7 @@ router.get('/users', checkRole(["ADMIN"]), userController.getAll);
 
 /**
  * @swagger
- * /users/{id}:
+ * /auth/users/{id}:
  *   get:
  *     description: Get user by ID (Admin only).
  *     security:
@@ -58,7 +58,7 @@ router.get('/users/:id', checkRole(["ADMIN"]), userController.getOne);
 
 /**
  * @swagger
- * /register:
+ * /auth/register:
  *   post:
  *     description: Register a new user.
  *     requestBody:
@@ -98,7 +98,7 @@ router.post('/register', [
 
 /**
  * @swagger
- * /login:
+ * /auth/login:
  *   post:
  *     description: Login an existing user and obtain a JWT token.
  *     requestBody:
@@ -127,7 +127,7 @@ router.post('/login', [
 
 /**
  * @swagger
- * /users/{id}:
+ * /auth/users/{id}:
  *   put:
  *     description: Update user details (Admin only).
  *     security:
@@ -172,7 +172,7 @@ router.put('/users/:id', checkRole(["ADMIN"]), userController.update);
 
 /**
  * @swagger
- * /users/{id}:
+ * /auth/users/{id}:
  *   delete:
  *     description: Delete a user (Admin only).
  *     security:
