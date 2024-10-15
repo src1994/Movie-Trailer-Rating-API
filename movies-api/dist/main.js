@@ -1,15 +1,18 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import path from 'path';
+import fileUpload from 'express-fileupload';
 import UserRouter from './routers/UserRouter.js';
 import movieRouter from './routers/movieRouter.js';
-import cors from 'cors';
 import mongoose from 'mongoose';
+import corsMiddleware from './middlewares/corsMiddleware.js';
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 dotenv.config();
 const PORT = process.env.PORT || 7878;
 const app = express();
-app.use(cors({
-    origin: '*'
-}));
+app.use(fileUpload());
+app.use('/static', express.static(path.join(__dirname, '../static')));
+app.use(corsMiddleware);
 app.use(express.json());
 app.use('/auth', UserRouter);
 app.use('/api', movieRouter);

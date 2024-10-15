@@ -1,29 +1,27 @@
 import express from 'express';
 import dotenv from 'dotenv';
-//import fileUpload from 'express-fileupload'; // tem de estar antes da rota 
+import path from 'path';
+import fileUpload from 'express-fileupload'; // tem de estar antes das rotas
 import UserRouter from './routers/UserRouter.js'
 import movieRouter from './routers/movieRouter.js';
-import cors from 'cors';
+
 import mongoose from 'mongoose';
-//import bcrypt from 'bcryptjs';
-//const jwt = require('jsonwebtoken');
 
 
+import corsMiddleware from './middlewares/corsMiddleware.js';
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 dotenv.config();
 
 const PORT = process.env.PORT || 7878;
 
 const app = express();
-//app.use(fileUpload());
+app.use(fileUpload());
 
-//app.use(express.static('static'));
+app.use('/static', express.static(path.join(__dirname, '../static')));
 
-
-
-app.use(cors({
-   origin: '*'
-}))
+app.use(corsMiddleware);
 
 app.use(express.json());
 app.use('/auth', UserRouter);
